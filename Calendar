@@ -1,91 +1,171 @@
-<div class="container">
+<html>
+	<head>
+		<style type="text/css">
+			#calendar_container  {
+				width:230px;
+				height:220px;
+				border: solid 1px green;
+				position:relative;
+			}
+			#data_chooser {
+				width:170px;
+				height:25px;
+				border:solid 1px green;
+				margin-top:2px;
+				margin-left:24px;
+				text-align:center;
+			}
+			.arrow {
+				position: absolute;
+				top:2px;
+			}
+			.left {
+				left:2px;
+			}
+			.right {
+				right:2px;
+			}
+			.arrow a {
+				text-decoration: none;
+			}
+			#calendar_display table {
+				table-layout: fixed;
+				width:220px;
+				height:180px;
+				margin-left:6px;
 
-  <div class="calendar-container">
+			}
+			#alendar_display table td{
+				width: 70px;
+			}
+		</style>
+		<script type="text/javascript" src="../jquery-1.7.2.min.js"></script>
+		<script type="text/javascript">
 
-    <header>
-      
-      <div class="day">18</div>
-      <div class="month">August</div>
+			function generateCalendar(d) {
+				var days = howManyDays(d);
+				var shift = getDayFirstDate(d);
+				clear();
+				for(var i=0; i<days;i++) {
+					var posi_row = Math.floor((i+shift)/7);
+					var posi_col = Math.floor((i+shift)%7);
+					$('#calendar_display .r'+posi_row).children('.col'+posi_col).html(i+1);
+				}
+			}
 
-    </header>
+			function clear(){
+				$('#calendar_display tbody td').each(function(){
+					$(this).html('');
+				})
+			}
 
-    <table class="calendar">
-      
-      <thead>
+			function getDayFirstDate(d) {
+				var tempd = new Date();
+				tempd.setFullYear(d.getFullYear());
+				tempd.setMonth(d.getMonth());
+				tempd.setDate(1);
+				tempd.setHours(0);
+				tempd.setMinutes(0);
+				tempd.setSeconds(0);
+				// var timeSince1970 = tempd.getTime();
+				// var daysSince1970 = Math.floor(timeSince1970/(1000*60*60*24));
+				// return (daysSince1970+4)%7;
+				return tempd.getDay();
+			}
 
-        <tr>
+			function howManyDays(d) {
+				var m = d.getMonth()+1 ;
+				if(m==1||m==3||m==5||m==7||m==8||m==10||m==12) return 31;
+				if(m==2) {
+					if(isLeapYear(d.getFullYear())) {
+						return 29
+					} else {
+						return 28
+					}
+				}
+				return 30;
+			}
 
-          <td>Mon</td>
-          <td>Tue</td>
-          <td>Wed</td>
-          <td>Thu</td>
-          <td>Fri</td>
-          <td>Sat</td>
-          <td>Sun</td>
+			function isLeapYear(year) {
+				if(year%400==0) {
+					return true;
+				} else if(year%100==0) {
+					return false;
+				} else if(year%4==0) {
+					return true;
+				} else {
+					return false;
+				}
+			}
 
-        </tr>
+			function updateDate(d, sign) {
+				var m = d.getMonth();
+				if(sign) {
+					if(m+1>11) {
+						d.setFullYear(d.getFullYear()+1);
+						d.setMonth(0);
+					} else {
+						d.setMonth(m+1);
+					}
 
-      </thead>
+				} else {
+					if(m-1<0) {
+						d.setFullYear(d.getFullYear()-1);
+						d.setMonth(11);
+					} else {
+						d.setMonth(m-1);
+					}
 
-      <tbody>
+				}
+			}
 
-        <tr>
-          <td class="prev-month">29</td>
-          <td class="prev-month">30</td>
-          <td class="prev-month">31</td>
-          <td>1</td>
-          <td>2</td>
-          <td>3</td>
-          <td>4</td>
-        </tr>
+			$(function(){
 
-        <tr>
-          <td>5</td>
-          <td>6</td>
-          <td>7</td>
-          <td>8</td>
-          <td>9</td>
-          <td>10</td>
-          <td>11</td>
-        </tr>
+				var d = new Date();
+				$('#data_chooser').html(d.getFullYear()+' year  '+(d.getMonth()+1)+' month');
+				generateCalendar(d);
 
-        <tr>
-          <td>12</td>
-          <td>13</td>
-          <td>14</td>
-          <td>15</td>
-          <td>16</td>
-          <td>17</td>
-          <td class="current-day">18</td>
-        </tr>
+				$('.left').click(function() {
+					updateDate(d, 0);
+					$('#data_chooser').html(d.getFullYear()+' year  '+(d.getMonth()+1)+' month');
+					generateCalendar(d);
 
-        <tr>
-          <td>19</td>
-          <td>20</td>
-          <td>21</td>
-          <td>22</td>
-          <td>23</td>
-          <td>24</td>
-          <td>25</td>
-        </tr>
+					return false;
+				});
 
-        <tr>
-          <td>26</td>
-          <td>27</td>
-          <td>28</td>
-          <td>29</td>
-          <td>30</td>
-          <td>31</td>
-          <td class="next-month">1</td>
-        </tr>
+				$('.right').click(function() {
+					updateDate(d, 1);
+					$('#data_chooser').html(d.getFullYear()+' year  '+(d.getMonth()+1)+' month');
+					generateCalendar(d);
 
-      </tbody>
+					return false;
+				});
+			});
 
-    </table>
 
-    <div class="ring-left"></div>
-    <div class="ring-right"></div>
 
-  </div> <!-- end calendar-container -->
-
-</div> <!-- end container -->
+		</script>
+	</head>
+	<body>
+		<div id="calendar_container">
+			<div class="arrow left"><a href="#l">&lt;</a></div>
+			<div class="arrow right"><a href="#r">&gt;</a></div>
+			<div id="data_chooser"></div>
+			<div id="calendar_display">
+				<table>
+					<thead>
+						<tr><td>Sun</td><td>Mon</td><td>Tue</td><td>Wed</td><td>Thu</td><td>Fri</td><td>Sat</td></tr>
+					</thead>
+					<tbody>
+						<tr class="r0"><td class="col0"><td class="col1"><td class="col2"><td class="col3"><td class="col4"><td class="col5"><td class="col6"></td></tr>
+						<tr class="r1"><td class="col0"><td class="col1"><td class="col2"><td class="col3"><td class="col4"><td class="col5"><td class="col6"></td></tr>
+						<tr class="r2"><td class="col0"><td class="col1"><td class="col2"><td class="col3"><td class="col4"><td class="col5"><td class="col6"></td></tr>
+						<tr class="r3"><td class="col0"><td class="col1"><td class="col2"><td class="col3"><td class="col4"><td class="col5"><td class="col6"></td></tr>
+						<tr class="r4"><td class="col0"><td class="col1"><td class="col2"><td class="col3"><td class="col4"><td class="col5"><td class="col6"></td></tr>
+						<tr class="r5"><td class="col0"><td class="col1"><td class="col2"><td class="col3"><td class="col4"><td class="col5"><td class="col6"></td></tr>
+					</tbody>
+				</table>
+			</dvi>
+		</div>
+	</body>
+</html>
